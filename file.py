@@ -23,8 +23,13 @@ joined = rating_content\
         .map(lambda x: (x[1][1], x[1][0]))\
         .groupByKey()\
         .map(lambda x: (x[0], list(x[1])))\
-        .map(lambda x: (x[0], sum(x[1]) / len(x[1])))\
+        .map(lambda x: (x[0], sum(x[1]) / len(x[1])))
+        
 
-joined.saveAsTextFile("results")
+header = spark.sparkContext.parallelize([("genre", "avg_rating")])
+
+result = header.union(joined)\
+         .map(lambda x: str(x[0]) + "," + str(x[1]))\
+         .saveAsTextFile("results")
 
 spark.stop()
